@@ -1,7 +1,7 @@
 #include <Arduino.h>
-#include <ArduinoJson.h>
+
 #include <WiFi.h>
-#include <HTTPClient.h>
+
 #include <Preferences.h>
 #include <Location.h>
 
@@ -31,41 +31,13 @@ const char * ssidVal;
 const char * passKey;
 const char * passVal;
 
-const char * locationURL = "https://ipapi.co/json/";
+
 const char * city;
 const char * latitude;
 const char * longitude;
+const char * locationURL = "https://ipapi.co/json/";
 
-void getLocation()
-{
-  HTTPClient http;
-  http.begin(locationURL);
 
-  // Send HTTP GET request
-  int httpResponseCode = http.GET();
-
-  if (httpResponseCode > 0)
-  {
-    Serial.print("HTTP Response code: ");
-    Serial.println(httpResponseCode);
-    String payload = http.getString();
-    Serial.println(payload);
-    DynamicJsonDocument doc(5024);
-    deserializeJson(doc, payload);
-    city = doc["city"];
-    latitude = doc["latitude"];
-    longitude = doc["longitude"];
-    Serial.print("city ");
-    Serial.println(city);
-  }
-  else
-  {
-    Serial.print("Error code: ");
-    Serial.println(httpResponseCode);
-  }
-  // Free resources
-  http.end();
-}
 
 void setup() {
   Serial.begin(115200);
@@ -97,7 +69,7 @@ void setup() {
   Serial.println(WiFi.localIP());
   
   // get location city, latitude and longitude of device
-  getLocation(); 
+  location myLocation = getLocation(locationURL, city, latitude, longitude); 
 }
 
 void loop() {
