@@ -26,16 +26,16 @@
 Preferences preferences;
 
 const char * ssidKey;
-const char * ssidVal;
+char * ssidVal;
 
 const char * passKey;
-const char * passVal;
+char * passVal;
 
 
-const char * city;
-const char * latitude;
-const char * longitude;
 const char * locationURL = "https://ipapi.co/json/";
+
+const char * weatherAPIKey;
+char * weatherURL;
 
 
 
@@ -44,20 +44,36 @@ void setup() {
   // open or create new namespace for preference data in read/write mode (false for readonly)
   preferences.begin("wifi", false);
   // set wifi data, remove confidential info before committing and pushing.
+  // c_str() always refers to internal location which can be overwritten
+  // so need to copy the string into a char* address
   ssidKey = "ssid"; 
-  ssidVal = ""; // manually add ssid if need to set
+  String ssidValString = preferences.getString(ssidKey, "");
+  ssidVal = new char[ssidValString.length() + 1]; // set size of string block
+  strcpy(ssidVal, preferences.getString(ssidKey, "").c_str()); 
+  Serial.println(ssidVal);
 
   passKey = "password";
-  passVal = ""; // manually add password if need to set
+  String passValString = preferences.getString(passKey, "");
+  passVal = new char[passValString.length() + 1]; // set size of string block
+  strcpy(passVal, passValString.c_str()); 
+  Serial.println(passVal);
 
-  if (preferences.getString(ssidKey, "") == "")
-    preferences.putString(ssidKey, ssidVal);
-  if (preferences.getString(passKey, "") == "")
-    preferences.putString(passKey, passVal);
+  weatherAPIKey = "weatherAPI";
+  String weatherAPIValString = preferences.getString(weatherAPIKey, "");
+
+
+  // if (ssidVal == "")
+  //   preferences.putString(ssidKey, ""); // manually add ssid if need to set
+  // if (passVal == "")
+  //   preferences.putString(passKey, ""); // manually add password if need to set
+  // if (weatherAPIValString == "")
+  //   preferences.putString(weatherAPIKey, ""); // manually add weatherapival if need to set
+
   
-
+  
+  Serial.println(weatherAPIValString);
   // connect to wifi
-  WiFi.begin(preferences.getString(ssidKey, "").c_str(), preferences.getString(passKey, "").c_str());
+  WiFi.begin(ssidVal, passVal); // NEEDS const char * as input args
   Serial.println("Connecting");
   while (WiFi.status() != WL_CONNECTED)
   {
@@ -69,13 +85,18 @@ void setup() {
   Serial.println(WiFi.localIP());
   
   // get location city, latitude and longitude of device
-  location myLocation = getLocation(locationURL, city, latitude, longitude); 
+  Location myLocation;
+  
+  myLocation.getLocation(locationURL);
+  String weatherURLString = "https://api.openweathermap.org/data/2.5/onecall?lat=" + String(myLocation.getLatitude()) + "&lon=" + String(myLocation.getLongitude()) + "&exclude=minutely,hourly&units=metric&appid=" + weatherAPIValString;
+  weatherURL = new char[weatherURLString.length() + 1]; // set size of string block
+  strcpy(weatherURL, weatherURLString.c_str()); // save to global const char *
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  // Serial.println(preferences.getString(ssidKey));
-  // Serial.println(preferences.getString(passKey));
+  Serial.println("running this");
+  Serial.println(weatherURL);
+
 }
 
 

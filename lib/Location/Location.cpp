@@ -1,13 +1,15 @@
 
 
 
-#include <HTTPClient.h>
-#include <ArduinoJson.h>
-#include "Location.h"
 
-location getLocation(const char *locationURL, const char *city, const char *latitude, const char *longitude)
+
+#include "Location.h"
+Location::Location () {
+    
+}
+
+void Location::getLocation(const char * locationURL)
 {
-    HTTPClient http;
     http.begin(locationURL);
 
     // Send HTTP GET request
@@ -24,7 +26,7 @@ location getLocation(const char *locationURL, const char *city, const char *lati
         city = doc["city"];
         latitude = doc["latitude"];
         longitude = doc["longitude"];
-
+        doc.clear();
     }
     else
     {
@@ -33,10 +35,22 @@ location getLocation(const char *locationURL, const char *city, const char *lati
     }
     // Free resources
     http.end();
-    location locationData;
-    locationData.city = city;
-    locationData.latitude = latitude;
-    locationData.longitude = longitude;
-    return locationData;
 }
 
+const char * Location::getCity()
+{
+    return city;
+}
+
+float Location::getLatitude()
+{
+    return latitude;
+}
+
+float Location::getLongitude()
+{
+    return longitude;
+}
+
+Location::~Location () {
+}

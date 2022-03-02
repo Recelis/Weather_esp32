@@ -1,14 +1,24 @@
 #ifndef LOCATION_USING_IP_ADDRESS_H
 #define LOCATION_USING_IP_ADDRESS_H
 
-struct location
+#include <ArduinoJson.h>
+#include <HTTPClient.h>
+
+class Location
 {
-    const char *city;
-    const char *latitude;
-    const char *longitude;
+    private: 
+        const char *city;
+        float latitude;
+        float longitude;
+        HTTPClient http;
+        
+    public:
+        Location();
+        ~Location();
+        void getLocation(const char * locationURL);
+        const char * getCity();
+        float getLatitude();
+        float getLongitude();
 };
-
-
-location getLocation(const char *locationURL, const char *city, const char *latitude, const char *longitude);
 
 #endif
