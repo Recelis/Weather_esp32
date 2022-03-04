@@ -1,14 +1,9 @@
-
-
-
-
-
 #include "Location.h"
-Location::Location () {
-    
+Location::Location()
+{
 }
 
-void Location::getLocation(const char * locationURL)
+void Location::getLocation(const char *locationURL)
 {
     http.begin(locationURL);
 
@@ -20,7 +15,7 @@ void Location::getLocation(const char * locationURL)
         Serial.print("HTTP Response code: ");
         Serial.println(httpResponseCode);
         String payload = http.getString();
-        Serial.println(payload);
+        // Serial.println(payload);
         DynamicJsonDocument doc(5024);
         deserializeJson(doc, payload);
         city = doc["city"];
@@ -37,7 +32,7 @@ void Location::getLocation(const char * locationURL)
     http.end();
 }
 
-const char * Location::getCity()
+const char *Location::getCity()
 {
     return city;
 }
@@ -52,5 +47,6 @@ float Location::getLongitude()
     return longitude;
 }
 
-Location::~Location () {
+Location::~Location()
+{
 }
