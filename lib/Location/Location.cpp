@@ -15,10 +15,10 @@ void Location::getLocation(const char *locationURL)
         Serial.print("HTTP Response code: ");
         Serial.println(httpResponseCode);
         String payload = http.getString();
-        // Serial.println(payload);
         DynamicJsonDocument doc(5024);
         deserializeJson(doc, payload);
-        city = doc["city"];
+
+        city = strdup(doc["city"]); // doc["city"] get's overwritten by later uses of DynamicJSON therefore copy to city
         latitude = doc["latitude"];
         longitude = doc["longitude"];
         doc.clear();
@@ -32,7 +32,7 @@ void Location::getLocation(const char *locationURL)
     http.end();
 }
 
-const char *Location::getCity()
+char *Location::getCity()
 {
     return city;
 }

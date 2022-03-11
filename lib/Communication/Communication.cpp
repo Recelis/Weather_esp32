@@ -11,12 +11,17 @@ Communication::Communication()
   Serial1.begin(9600, SERIAL_8N1, RXD, TXD);
 }
 
-void Communication::sendData(String sevenDayForecast, String)
+void Communication::sendData(String sevenDayForecast, String location)
 {
     // combines the location city data with weather data
-    // send to Mega
-
-   Serial1.print(sevenDayForecast);
+    // send to Mega 
+    DynamicJsonDocument doc(1500);
+    deserializeJson(doc, sevenDayForecast);
+    doc["location"] = location;
+    char output[1500];
+    serializeJson(doc, output);
+    Serial1.print(output);
+    Serial.println(output);
 }
 
 Communication::~Communication()
