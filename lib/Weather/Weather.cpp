@@ -50,7 +50,7 @@ void Weather::formatSevenDayForecast(String payload)
 {
     // get an arduinojson of http payload
     const int size = sizeof(payload);
-    DynamicJsonDocument doc(1024);
+    DynamicJsonDocument doc(1600);
     // apply filters
     StaticJsonDocument<500> filter;
 
@@ -66,11 +66,12 @@ void Weather::formatSevenDayForecast(String payload)
     filter["daily"][0]["humidity"] = true;
 
     deserializeJson(doc, payload, DeserializationOption::Filter(filter));
+    memset(sevenDayForecast, 0, strlen(sevenDayForecast)); // reset sevenDayForecast
     serializeJson(doc, sevenDayForecast); // convert back to string
     doc.clear();
 }
 
-String Weather::getSevenDayForecast()
+char * Weather::getSevenDayForecast()
 {
     return sevenDayForecast;
 }

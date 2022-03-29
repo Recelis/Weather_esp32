@@ -7,7 +7,7 @@
 class Weather
 {
 private:
-    String sevenDayForecast;
+    char sevenDayForecast[1600];
     HTTPClient http;
     // the following variables are unsigned longs because the time, measured in
     // milliseconds, will quickly become a bigger number than can be stored in an int.
@@ -25,7 +25,7 @@ public:
     Weather();
     ~Weather();
     bool getWeather(const char *weatherURL); // returns a value letting main know to getSevenDayForecast
-    String getSevenDayForecast();
+    char * getSevenDayForecast();
 };
 
 #endif

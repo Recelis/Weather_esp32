@@ -9,7 +9,7 @@ private:
 public:
     Communication();
     ~Communication();
-    void sendData(String sevenDayForecast, String city);
+    void sendData(char * sevenDayForecast, char * city);
 };
 
 #endif

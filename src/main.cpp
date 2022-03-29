@@ -104,7 +104,7 @@ void loop()
   if (isNewData)
   {
     Serial.println("Sending new Data:");
-    String sevenDayForecast = myWeather.getSevenDayForecast();
+    char * sevenDayForecast = myWeather.getSevenDayForecast();
     myCommunication.sendData(sevenDayForecast, myLocation.getCity());
   }
 }
