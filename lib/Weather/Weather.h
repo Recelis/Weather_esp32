@@ -21,7 +21,7 @@ private:
     bool onStart = true;
     bool isNewData = false;
     void callWeatherAPI();
-    void formatSevenDayForecast(String payload);
+    void formatSevenDayForecast(char* payload);
 public:
     Weather();
     ~Weather();

@@ -10,7 +10,7 @@ void Location::getLocation(const char *locationURL)
     // Send HTTP GET request
     int httpResponseCode = http.GET();
 
-    if (httpResponseCode == 200)
+    if (httpResponseCode == HTTP_CODE_OK)
     {
         Serial.print("HTTP Response code: ");
         Serial.println(httpResponseCode);

@@ -33,12 +33,40 @@ void Weather::callWeatherAPI()
 
     // Send HTTP GET request
     int httpResponseCode = http.GET();
-    if (httpResponseCode == 200)
+    if (httpResponseCode == HTTP_CODE_OK)
     {
         Serial.print("HTTP Response code: ");
         Serial.println(httpResponseCode);
-        String payload = http.getString();
-        // Serial.println(payload);
+        // get length of document (is -1 when Server sends no Content-Length header)
+        int len = http.getSize();
+        if (len > 10000) {
+            Serial.print("Error: Response is too long!");
+            isNewData = false;
+            return;
+        }
+        char* payload;
+        Serial.println(len);
+        // create buffer for read
+        char buff[len] = {0};
+        payload = buff;
+        // get tcp stream
+        WiFiClient * stream = http.getStreamPtr();
+
+        // read all data from server
+        while(http.connected() && (len > 0 || len == -1)) {
+            // get available data size
+            size_t size = stream->available();
+
+            if(size) {
+                // read up to 128 byte
+                int c = stream->readBytes(buff, ((size > sizeof(buff)) ? sizeof(buff) : size));
+                
+                if(len > 0) {
+                    len -= c;
+                }
+            }
+            delay(1);
+        }
 
         formatSevenDayForecast(payload);
         onStart = false; // let timer know to measure by time difference now.
@@ -53,10 +81,11 @@ void Weather::callWeatherAPI()
     http.end();
 }
 
-void Weather::formatSevenDayForecast(String payload)
+void Weather::formatSevenDayForecast(char* payload)
 {
     // get an arduinojson of http payload
-    const int size = sizeof(payload);
+    int size = sizeof(payload);
+    // Serial.println(payload);
     DynamicJsonDocument doc(1600);
     // apply filters
     StaticJsonDocument<500> filter;
@@ -75,6 +104,7 @@ void Weather::formatSevenDayForecast(String payload)
     deserializeJson(doc, payload, DeserializationOption::Filter(filter));
     memset(sevenDayForecast, 0, strlen(sevenDayForecast)); // reset sevenDayForecast
     serializeJson(doc, sevenDayForecast); // convert back to string
+    Serial.println(sevenDayForecast);
     doc.clear();
 }
 
