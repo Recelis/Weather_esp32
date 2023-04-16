@@ -1,10 +1,12 @@
 {
-    "files.associations": {
-        "new": "cpp",
-        "functional": "cpp",
-        "istream": "cpp",
-        "array": "cpp",
-        "tuple": "cpp",
-        "utility": "cpp"
-    }
+  "files.associations": {
+    "new": "cpp",
+    "functional": "cpp",
+    "istream": "cpp",
+    "array": "cpp",
+    "tuple": "cpp",
+    "utility": "cpp",
+    "system_error": "cpp",
+    "type_traits": "cpp"
+  }
 }

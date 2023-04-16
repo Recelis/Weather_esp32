@@ -5,6 +5,7 @@
 #include <Weather.h>
 #include <Communication.h>
 #include <Environment.h>
+#include <DayOfWeek.h>
 
 /*
   ESP32 Weather built on PlatformIO.
@@ -37,6 +38,9 @@ Communication myCommunication;
 // initialise environment object
 Environment myEnvironment;
 
+// initialise day of week object
+DayOfWeek myDayOfWeek;
+
 void setup()
 {
   Serial.begin(115200);
@@ -62,6 +66,7 @@ void setup()
     + "&exclude=minutely,hourly&units=metric&appid=" 
     + myEnvironment.getWeatherAPIValString();
   myWeather.setWeatherURL(weatherURLString);
+  myDayOfWeek.requestDayOfWeek(WiFi.localIP().toString());
 }
 
 void loop()
@@ -72,6 +77,6 @@ void loop()
   {
     Serial.println("Sending new Data:");
     char * sevenDayForecast = myWeather.getSevenDayForecast();
-    myCommunication.sendData(sevenDayForecast, myLocation.getCity());
+    myCommunication.sendData(sevenDayForecast, myLocation.getCity(), myDayOfWeek.getDayOfWeek());
   }
 }

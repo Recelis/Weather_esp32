@@ -2,7 +2,6 @@
 #define ENVIRONMENT_H
 
 #include <ArduinoJson.h>
-#include <HTTPClient.h>
 #include <Preferences.h>
 
 class Environment
