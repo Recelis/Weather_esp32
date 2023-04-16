@@ -4,12 +4,19 @@ Weather::Weather()
 {
 }
 
-bool Weather::getWeather(const char *weatherURL)
+void Weather::setWeatherURL(String urlString) 
+{
+    char* url = new char[urlString.length() + 1]; // set size of string block
+    strcpy(url, urlString.c_str());
+    weatherURL = url;
+}
+
+bool Weather::getWeather()
 {
     // checks that 10 mins have passed before sending new request
-    if ((millis() - lastTime) > timerDelay | onStart)
+    if (onStart | ((millis() - lastTime) > timerDelay))
     {
-        callWeatherAPI(weatherURL);
+        callWeatherAPI();
         // send Serial data to Mega
         
         if (isNewData) {
@@ -20,13 +27,13 @@ bool Weather::getWeather(const char *weatherURL)
     return false; // sending old data
 }
 
-void Weather::callWeatherAPI(const char *weatherURL)
+void Weather::callWeatherAPI()
 {
     http.begin(weatherURL);
 
     // Send HTTP GET request
     int httpResponseCode = http.GET();
-    if (httpResponseCode > 0)
+    if (httpResponseCode == 200)
     {
         Serial.print("HTTP Response code: ");
         Serial.println(httpResponseCode);

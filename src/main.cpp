@@ -1,11 +1,10 @@
 #include <Arduino.h>
 
 #include <WiFi.h>
-
-#include <Preferences.h>
 #include <Location.h>
 #include <Weather.h>
 #include <Communication.h>
+#include <Environment.h>
 
 /*
   ESP32 Weather built on PlatformIO.
@@ -24,18 +23,7 @@
 
 */
 
-Preferences preferences;
-
-const char *ssidKey;
-char *ssidVal;
-
-const char *passKey;
-char *passVal;
-
 const char *locationURL = "https://ipapi.co/json/";
-
-const char *weatherAPIKey;
-char *weatherURL;
 
 // initialise Location object
 Location myLocation;
@@ -46,39 +34,15 @@ Weather myWeather;
 // initialise communication object
 Communication myCommunication;
 
+// initialise environment object
+Environment myEnvironment;
+
 void setup()
 {
   Serial.begin(115200);
-  // open or create new namespace for preference data in read/write mode (false for readonly)
-  preferences.begin("wifi", false);
-  // set wifi data, remove confidential info before committing and pushing.
-  // c_str() always refers to internal location which can be overwritten
-  // so need to copy the string into a char* address
-  ssidKey = "ssid";
-  String ssidValString = preferences.getString(ssidKey, "");
-  ssidVal = new char[ssidValString.length() + 1]; // set size of string block
-  strcpy(ssidVal, preferences.getString(ssidKey, "").c_str());
-  Serial.println(ssidVal);
-
-  passKey = "password";
-  String passValString = preferences.getString(passKey, "");
-  passVal = new char[passValString.length() + 1]; // set size of string block
-  strcpy(passVal, passValString.c_str());
-  Serial.println(passVal);
-
-  weatherAPIKey = "weatherAPI";
-  String weatherAPIValString = preferences.getString(weatherAPIKey, "");
-
-  // if (ssidVal == "")
-  //   preferences.putString(ssidKey, ""); // manually add ssid if need to set
-  // if (passVal == "")
-  //   preferences.putString(passKey, ""); // manually add password if need to set
-  // if (weatherAPIValString == "")
-  //   preferences.putString(weatherAPIKey, ""); // manually add weatherapival if need to set
-
-  Serial.println(weatherAPIValString);
   // connect to wifi
-  WiFi.begin(ssidVal, passVal); // NEEDS const char * as input args
+  myEnvironment.begin();
+  WiFi.begin(myEnvironment.getSSID(), myEnvironment.getPassword()); // NEEDS const char * as input args
   Serial.println("Connecting");
   while (WiFi.status() != WL_CONNECTED)
   {
@@ -92,14 +56,17 @@ void setup()
   // get location city, latitude and longitude of device
 
   myLocation.getLocation(locationURL);
-  String weatherURLString = "https://api.openweathermap.org/data/2.5/onecall?lat=" + String(myLocation.getLatitude()) + "&lon=" + String(myLocation.getLongitude()) + "&exclude=minutely,hourly&units=metric&appid=" + weatherAPIValString;
-  weatherURL = new char[weatherURLString.length() + 1]; // set size of string block
-  strcpy(weatherURL, weatherURLString.c_str());         // save to global const char *
+  String weatherURLString = "https://api.openweathermap.org/data/2.5/onecall?lat=" 
+    + String(myLocation.getLatitude()) 
+    + "&lon=" + String(myLocation.getLongitude()) 
+    + "&exclude=minutely,hourly&units=metric&appid=" 
+    + myEnvironment.getWeatherAPIValString();
+  myWeather.setWeatherURL(weatherURLString);
 }
 
 void loop()
 {
-  bool isNewData = myWeather.getWeather(weatherURL);
+  bool isNewData = myWeather.getWeather();
   // if newWeatherData then send to Mega
   if (isNewData)
   {
