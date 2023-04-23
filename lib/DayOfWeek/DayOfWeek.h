@@ -13,7 +13,7 @@ private:
 public:
     DayOfWeek();
     ~DayOfWeek();
-    void requestDayOfWeek(String ipAddress);
+    void requestDayOfWeek(float latitude, float longitude);
     char* getDayOfWeek();
 };
 

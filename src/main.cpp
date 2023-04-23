@@ -65,8 +65,9 @@ void setup()
     + "&lon=" + String(myLocation.getLongitude()) 
     + "&exclude=minutely,hourly&units=metric&appid=" 
     + myEnvironment.getWeatherAPIValString();
+  Serial.println(weatherURLString);
   myWeather.setWeatherURL(weatherURLString);
-  myDayOfWeek.requestDayOfWeek(WiFi.localIP().toString());
+  myDayOfWeek.requestDayOfWeek(myLocation.getLatitude(), myLocation.getLongitude());
 }
 
 void loop()

@@ -4,8 +4,9 @@
 */
 DayOfWeek::DayOfWeek() {}
 
-void DayOfWeek::requestDayOfWeek(String ipAddress) {
-    String timeApiURLString = "https://www.timeapi.io/api/Time/current/ip?ipAddress=" + ipAddress;
+void DayOfWeek::requestDayOfWeek(float latitude, float longitude) {
+    String timeApiURLString = "https://www.timeapi.io/api/Time/current/coordinate?latitude=" + String(latitude) + "&longitude=" + String(longitude);
+    Serial.println(timeApiURLString);
     const char* timeApiURL = timeApiURLString.c_str();
     http.begin(timeApiURL);
 
