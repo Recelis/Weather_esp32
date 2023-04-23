@@ -76,6 +76,7 @@ void Weather::callWeatherAPI()
     {
         Serial.print("Error code: ");
         Serial.println(httpResponseCode);
+        isNewData = false; // is error then do another call.
     }
     // Free resources
     http.end();
