@@ -11,7 +11,7 @@ Environment::Environment()
 }
 
 void Environment::begin() {
-    // open or create new namespace for preference data in read/write mode (false for readonly)
+    // open or create new namespace for preference data in read/write mode (true for readonly)
     preferences.begin("wifi", false);
 }
 
